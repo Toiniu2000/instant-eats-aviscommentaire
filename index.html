@@ -106,6 +106,7 @@ textarea{min-height:150px;resize:vertical}
             <button class="emoji" data-emoji="🍽️">🍽️</button>
           </div>
           <button class="btn" id="submitComment">Publier</button>
+          <button class="btn" id="loginBtn">Connexion Google</button>
         </div>
       </div>
 
@@ -114,34 +115,60 @@ textarea{min-height:150px;resize:vertical}
       <div class="free-cta-wrap">
         <a class="free-cta" href="https://bit.ly/instant_eats" target="_blank">Essai gratuit 7 jours</a>
       </div>
-
-      <div class="socials">
-        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/facebook-new.png"/>Facebook</a>
-        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/instagram-new.png"/>Instagram</a>
-        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/twitter--v1.png"/>X/Twitter</a>
-        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/tiktok.png"/>TikTok</a>
-        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/youtube-play.png"/>YouTube</a>
+<div class="socials">
+  <a class="social-link" href="https://www.facebook.com/profile.php?id=61578876662872" target="_blank">
+    <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook"/>Facebook
+  </a>
+  <a class="social-link" href="https://www.instagram.com/instant_eats_/?igsh=cTRkbWo2dTU5dHU%3D&utm_source=qr" target="_blank">
+    <img src="https://img.icons8.com/color/48/instagram-new.png" alt="Instagram"/>Instagram
+  </a>
+  <a class="social-link" href="https://x.com/instant_eats?s=21" target="_blank">
+    <img src="https://img.icons8.com/color/48/twitter--v1.png" alt="X/Twitter"/>X/Twitter
+  </a>
+  <a class="social-link" href="https://www.tiktok.com/@instant.eats7?_t=ZN-8zIoBWSzvEs&_r=1" target="_blank">
+    <img src="https://img.icons8.com/color/48/tiktok.png" alt="TikTok"/>TikTok
+  </a>
+  <a class="social-link" href="https://youtube.com/@instanteats-e4k?si=l6viisIs26WDcp_r" target="_blank">
+    <img src="https://img.icons8.com/color/48/youtube-play.png" alt="YouTube"/>YouTube
+  </a>
+</div>
+      
       </div>
     </div>
   </div>
 </div>
 
-<div class="page" id="about" aria-hidden="true"><div class="card"><h2>À propos</h2><p>📅 7 jours → 56 recettes testées | 20 techniques découvertes
+<div class="page" id="about" aria-hidden="true">
+  <div class="card">
+    <h2>À propos</h2>
+    <p>📅 7 jours → 56 recettes testées | 20 techniques découvertes
 📅 1 mois → 240 recettes | 50h gagnées | ~100 € économisés
 📅 3 mois → 720 recettes | Bases solides | -50 % fast-food
 📅 6 mois → 1 440 recettes | Niveau commis confirmé | Énergie + sommeil améliorés
-</p></div></div>
-<div class="page" id="assistance" aria-hidden="true"><div class="card"><h2>Assistance</h2><p>👉 Besoin d’aide ?
-Notre équipe te répond directement à <a href="mailto:instant.eats@gmx.com?subject=Assistance%20Instant%20Eats&body=Bonjour%20!%20%0AJe%20rencontre%20un%20probl%C3%A8me%20avec%20%3A%20_____________________%0A%0AMerci%20">
-📩 Besoin d'aide ? Contactez-nous
-</a></p></div></div>
-<div class="page" id="settings" aria-hidden="true"><div class="card"><h2>Accessibilité</h2><p>Nous raffinons cette onglets pour vous.
-</p></div></div>
+</p>
+  </div>
+</div>
+
+<div class="page" id="assistance" aria-hidden="true">
+  <div class="card">
+    <h2>Assistance</h2>
+    <p>👉 Besoin d’aide ?
+Notre équipe te répond directement à <a href="mailto:instant.eats@gmx.com?subject=Assistance%20Instant%20Eats&body=Bonjour%20!%20%0AJe%20rencontre%20un%20probl%C3%A8me%20avec%20%3A%20_____________________%0A%0AMerci%20">📩 Contactez-nous</a></p>
+  </div>
+</div>
+
+<div class="page" id="settings" aria-hidden="true">
+  <div class="card">
+    <h2>Accessibilité</h2>
+    <p>Nous raffinons cette onglets pour vous.</p>
+  </div>
+</div>
+
 </main>
 </div>
 
-<script>
-const API_URL = "https://ton-serveur.vercel.app/comments"; // <-- Remplace par l'URL de ton serveur Node.js déployé
+<script type="module">
+const API_URL = "https://instant-eats-aviscommentaire.vercel.app/comments"; // <-- Ton serveur Node.js
 
 // Onglets
 const tabs=document.querySelectorAll('.tab-btn'), pages=document.querySelectorAll('.page')
@@ -151,6 +178,17 @@ tabs.forEach(tab=>tab.addEventListener('click',()=>{
   tab.setAttribute('aria-selected','true')
   pages.forEach(p=>p.id===target?p.setAttribute('aria-hidden','false'):p.setAttribute('aria-hidden','true'))
 }))
+
+// Connexion Google via Supabase
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+const SUPABASE_URL = "https://iszhlqozptyoqhggboho.supabase.co"
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzemhscW96cHR5b3FoZ2dib2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NTYwNjMsImV4cCI6MjA3MjAzMjA2M30.3b9w5g9BnJ75yAYOUOehhcHeTe48rt3aFlqgwcLBs7Y"
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+document.getElementById('loginBtn').addEventListener('click',async()=>{
+  const {error}=await supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://instant-eats-aviscommentaire.vercel.app/'}})
+  if(error) console.error(error)
+})
 
 // Gestion étoiles et emoji
 let selectedStar=0, selectedEmoji=''
@@ -162,26 +200,32 @@ const commentsList=document.getElementById('commentsList')
 document.getElementById('submitComment').addEventListener('click',async()=>{
   const name=document.getElementById('userName').value.trim(), comment=document.getElementById('userComment').value.trim()
   if(!name||!comment)return alert("Nom et commentaire requis")
-  await fetch(API_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({name,comment,star:selectedStar,emoji:selectedEmoji})
-  })
-  displayComments()
-  document.getElementById('userName').value='';document.getElementById('userComment').value='';selectedStar=0;selectedEmoji='';document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.emoji').forEach(e=>e.classList.remove('selected'))
+  try {
+    const res = await fetch(API_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name, comment, star:selectedStar, emoji:selectedEmoji})
+    });
+    if(!res.ok) throw new Error('Erreur serveur')
+    displayComments()
+    document.getElementById('userName').value='';document.getElementById('userComment').value='';selectedStar=0;selectedEmoji='';document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.emoji').forEach(e=>e.classList.remove('selected'))
+  } catch(e){console.error(e)}
 })
 
-// Afficher commentaires + animation cascade + like
+// Afficher commentaires
 async function displayComments(){
-  const data=await (await fetch(API_URL)).json()
-  commentsList.innerHTML=''
-  data.reverse().forEach((c,i)=>{
-    const div=document.createElement('div'); div.className='comment-item'; div.style.animationDelay=`${i*0.08}s`
-    div.innerHTML=`<div><strong>${c.name}</strong> ${c.star?'⭐'.repeat(c.star):''} ${c.emoji||''}<p>${c.comment}</p></div><div class="like-btn">❤</div>`
-    const likeBtn=div.querySelector('.like-btn')
-    likeBtn.addEventListener('click',()=>{likeBtn.classList.toggle('liked')})
-    commentsList.appendChild(div)
-  })
+  try{
+    const res = await fetch(API_URL)
+    const data = await res.json()
+    commentsList.innerHTML=''
+    data.forEach((c,i)=>{
+      const div=document.createElement('div'); div.className='comment-item'; div.style.animationDelay=`${i*0.08}s`
+      div.innerHTML=`<div><strong>${c.name}</strong> ${c.star?'⭐'.repeat(c.star):''} ${c.emoji||''}<p>${c.comment}</p></div><div class="like-btn">❤</div>`
+      const likeBtn=div.querySelector('.like-btn')
+      likeBtn.addEventListener('click',()=>{likeBtn.classList.toggle('liked')})
+      commentsList.appendChild(div)
+    })
+  } catch(e){console.error(e)}
 }
 displayComments()
 </script>
