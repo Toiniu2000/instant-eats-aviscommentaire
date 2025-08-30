@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Instant Eats — Commentaires 10/10</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-0:#f5f5dc; --bg-1:#f5f5dc;
+  --panel:#0b1624; --card:#0f1a2a;
+  --muted:#9fb2c9; --text:#e9f4fb;
+  --accent:#19d7ff; --accent-2:#7effc4;
+  --gold:#ffd166; --focus:rgba(25,215,255,0.18);
+  --radius:14px; --shadow:0 18px 50px rgba(0,0,0,0.6);
+  --ui:18px; --maxw:1200px;
+}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-0),var(--bg-1));
+  font-family:Inter,system-ui,Arial,sans-serif;color:var(--text);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:var(--ui);line-height:1.4}
+*{box-sizing:border-box;transition:all .3s ease}
+.wrap{max-width:var(--maxw);margin:28px auto;padding:20px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;align-items:center;gap:16px;padding:14px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);box-shadow:var(--shadow)}
+.logo{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#021018;font-size:20px;cursor:pointer}
+.brand{display:flex;flex-direction:column}
+.brand .title{font-weight:800;font-size:20px;color:#000000 !important}
+.brand .sub{font-size:13px;color:var(--muted)}
+nav{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tab-btn{background:transparent;border-radius:12px;padding:10px 14px;color:var(--muted);border:1px solid transparent;cursor:pointer;font-weight:700;box-shadow:none}
+.tab-btn:hover{transform:translateY(-3px);color:var(--text)}
+.tab-btn[aria-selected="true"]{color:#021018;background:linear-gradient(90deg,var(--accent),var(--accent-2));border:1px solid rgba(255,255,255,0.06);box-shadow:0 12px 30px rgba(0,209,255,0.12);transform:translateY(-4px)}
+main{background:var(--panel);padding:20px;border-radius:14px;box-shadow:var(--shadow);min-height:580px;transition:all .3s ease}
+.page{display:none;opacity:0;transform:translateY(10px);transition:all .4s ease}
+.page[aria-hidden="false"]{display:block;opacity:1;transform:translateY(0)}
+.card{background:var(--card);padding:18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.45)}
+h1,h2{margin:0 0 10px 0}
+h1{font-size:28px}
+h2{font-size:20px}
+p{margin:0 0 10px 0;color:var(--muted)}
+.comments-shell{display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.comments-left{flex:1;min-width:480px}
+label{display:block;font-weight:700;margin-bottom:8px;color:var(--text)}
+.input,textarea{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text);font-size:16px}
+textarea{min-height:150px;resize:vertical}
+.controls{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.stars{display:flex;gap:10px;align-items:center}
+.star{font-size:28px;cursor:pointer;opacity:0.28;padding:8px;border-radius:10px;background:transparent;border:0;color:var(--gold)}
+.star.on{opacity:1;transform:translateY(-6px) scale(1.06);filter:drop-shadow(0 6px 18px rgba(255,209,102,0.12))}
+.emoji-row{display:flex;gap:10px}
+.emoji{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-size:18px;background:transparent}
+.emoji.selected{background:var(--accent);color:#021018;box-shadow:0 10px 26px rgba(0,209,255,0.06)}
+#commentsList{margin-top:14px;display:flex;flex-direction:column;gap:12px;max-height:400px;overflow:auto;padding-right:6px}
+.comment-item{padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02);color:#ffffff;opacity:0;transform:translateY(-20px);display:flex;align-items:center;justify-content:space-between;animation:fadeDown 0.5s forwards}
+.comment-item:hover{transform:scale(1.02);box-shadow:0 10px 30px rgba(0,209,255,0.2)}
+.like-btn{cursor:pointer;font-size:20px;color:var(--muted);transition:all .2s ease}
+.like-btn.liked{color:#ff4d4d;transform:scale(1.2);}
+@keyframes fadeDown{0%{opacity:0;transform:translateY(-20px)}100%{opacity:1;transform:translateY(0)}}
+.free-cta-wrap{position:relative;margin-top:18px}
+.free-cta{display:inline-block;padding:14px 18px;border-radius:12px;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021018;text-decoration:none;cursor:pointer;box-shadow:0 22px 50px rgba(0,209,255,0.14);animation:float 2.8s ease-in-out infinite}
+@keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.socials{display:flex;gap:12px;margin-top:12px}
+.social-link{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;background:rgba(255,255,255,0.02);color:var(--text);text-decoration:none;border:1px solid rgba(255,255,255,0.02);transition:all .3s ease}
+.social-link:hover{transform:translateY(-3px);background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021018;box-shadow:0 12px 30px rgba(0,209,255,0.12)}
+.social-link img{width:32px;height:32px;border-radius:8px;object-fit:cover}
+@media(max-width:960px){.comments-shell{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">IE</div>
+  <div class="brand">
+    <div class="title">Instant Eats</div>
+    <div class="sub">Commentaires pro</div>
+  </div>
+  <nav>
+    <button class="tab-btn" data-target="comments" aria-selected="true">Commentaires</button>
+    <button class="tab-btn" data-target="about" aria-selected="false">À propos</button>
+    <button class="tab-btn" data-target="assistance" aria-selected="false">Assistance</button>
+    <button class="tab-btn" data-target="settings" aria-selected="false">Accessibilité</button>
+  </nav>
+</header>
+
+<main>
+<div class="page" id="comments" aria-hidden="false">
+  <div class="comments-shell">
+    <div class="comments-left">
+      <div class="card">
+        <h2>Laisser un commentaire</h2>
+        <label>Nom</label>
+        <input class="input" id="userName" placeholder="Ton nom">
+        <label>Commentaire</label>
+        <textarea id="userComment" placeholder="Ton commentaire ici..."></textarea>
+        <div class="controls">
+          <div class="stars">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <div class="emoji-row">
+            <button class="emoji" data-emoji="😊">😊</button>
+            <button class="emoji" data-emoji="🔥">🔥</button>
+            <button class="emoji" data-emoji="🤯">🤯</button>
+            <button class="emoji" data-emoji="🍽️">🍽️</button>
+          </div>
+          <button class="btn" id="submitComment">Publier</button>
+        </div>
+      </div>
+
+      <div id="commentsList"></div>
+
+      <div class="free-cta-wrap">
+        <a class="free-cta" href="https://bit.ly/instant_eats" target="_blank">Essai gratuit 7 jours</a>
+      </div>
+
+      <div class="socials">
+        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/facebook-new.png"/>Facebook</a>
+        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/instagram-new.png"/>Instagram</a>
+        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/twitter--v1.png"/>X/Twitter</a>
+        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/tiktok.png"/>TikTok</a>
+        <a class="social-link" href="#" target="_blank"><img src="https://img.icons8.com/color/48/youtube-play.png"/>YouTube</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="about" aria-hidden="true"><div class="card"><h2>À propos</h2><p>📅 7 jours → 56 recettes testées | 20 techniques découvertes
+📅 1 mois → 240 recettes | 50h gagnées | ~100 € économisés
+📅 3 mois → 720 recettes | Bases solides | -50 % fast-food
+📅 6 mois → 1 440 recettes | Niveau commis confirmé | Énergie + sommeil améliorés
+</p></div></div>
+<div class="page" id="assistance" aria-hidden="true"><div class="card"><h2>Assistance</h2><p>👉 Besoin d’aide ?
+Notre équipe te répond directement à <a href="mailto:instant.eats@gmx.com?subject=Assistance%20Instant%20Eats&body=Bonjour%20!%20%0AJe%20rencontre%20un%20probl%C3%A8me%20avec%20%3A%20_____________________%0A%0AMerci%20">
+📩 Besoin d'aide ? Contactez-nous
+</a></p></div></div>
+<div class="page" id="settings" aria-hidden="true"><div class="card"><h2>Accessibilité</h2><p>Nous raffinons cette onglets pour vous.
+</p></div></div>
+</main>
+</div>
+
+<script>
+const API_URL = "https://ton-serveur.vercel.app/comments"; // <-- Remplace par l'URL de ton serveur Node.js déployé
+
+// Onglets
+const tabs=document.querySelectorAll('.tab-btn'), pages=document.querySelectorAll('.page')
+tabs.forEach(tab=>tab.addEventListener('click',()=>{
+  const target=tab.dataset.target
+  tabs.forEach(t=>t.setAttribute('aria-selected','false'))
+  tab.setAttribute('aria-selected','true')
+  pages.forEach(p=>p.id===target?p.setAttribute('aria-hidden','false'):p.setAttribute('aria-hidden','true'))
+}))
+
+// Gestion étoiles et emoji
+let selectedStar=0, selectedEmoji=''
+document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{selectedStar=parseInt(s.dataset.value);document.querySelectorAll('.star').forEach(st=>st.classList.toggle('on',parseInt(st.dataset.value)<=selectedStar))}))
+document.querySelectorAll('.emoji').forEach(e=>e.addEventListener('click',()=>{selectedEmoji=e.dataset.emoji;document.querySelectorAll('.emoji').forEach(em=>em.classList.remove('selected'));e.classList.add('selected')}))
+
+// Publier commentaire
+const commentsList=document.getElementById('commentsList')
+document.getElementById('submitComment').addEventListener('click',async()=>{
+  const name=document.getElementById('userName').value.trim(), comment=document.getElementById('userComment').value.trim()
+  if(!name||!comment)return alert("Nom et commentaire requis")
+  await fetch(API_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name,comment,star:selectedStar,emoji:selectedEmoji})
+  })
+  displayComments()
+  document.getElementById('userName').value='';document.getElementById('userComment').value='';selectedStar=0;selectedEmoji='';document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.emoji').forEach(e=>e.classList.remove('selected'))
+})
+
+// Afficher commentaires + animation cascade + like
+async function displayComments(){
+  const data=await (await fetch(API_URL)).json()
+  commentsList.innerHTML=''
+  data.reverse().forEach((c,i)=>{
+    const div=document.createElement('div'); div.className='comment-item'; div.style.animationDelay=`${i*0.08}s`
+    div.innerHTML=`<div><strong>${c.name}</strong> ${c.star?'⭐'.repeat(c.star):''} ${c.emoji||''}<p>${c.comment}</p></div><div class="like-btn">❤</div>`
+    const likeBtn=div.querySelector('.like-btn')
+    likeBtn.addEventListener('click',()=>{likeBtn.classList.toggle('liked')})
+    commentsList.appendChild(div)
+  })
+}
+displayComments()
+</script>
+</body>
+</html>
