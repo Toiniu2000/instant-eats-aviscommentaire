@@ -118,7 +118,7 @@ textarea{min-height:150px;resize:vertical}
 
       <div class="socials">
         <a class="social-link" href="https://www.facebook.com/profile.php?id=61578876662872" target="_blank"><img src="https://img.icons8.com/color/48/facebook-new.png"/>Facebook</a>
-        <a class="social-link" href="https://www.instagram.com/instant_eats_/" target="_blank"><img src="https://img.icons8.com/color/48/instagram-new.png"/>Instagram</a>
+        <a class="social-link" href="https://www.instagram.com/instant_eats_" target="_blank"><img src="https://img.icons8.com/color/48/instagram-new.png"/>Instagram</a>
         <a class="social-link" href="https://x.com/instant_eats" target="_blank"><img src="https://img.icons8.com/color/48/twitter--v1.png"/>X/Twitter</a>
         <a class="social-link" href="https://www.tiktok.com/@instant.eats7" target="_blank"><img src="https://img.icons8.com/color/48/tiktok.png"/>TikTok</a>
         <a class="social-link" href="https://youtube.com/@instanteats-e4k" target="_blank"><img src="https://img.icons8.com/color/48/youtube-play.png"/>YouTube</a>
@@ -133,15 +133,20 @@ textarea{min-height:150px;resize:vertical}
 📅 6 mois → 1 440 recettes | Niveau commis confirmé | Énergie + sommeil améliorés
 </p></div></div>
 <div class="page" id="assistance" aria-hidden="true"><div class="card"><h2>Assistance</h2><p>👉 Besoin d’aide ?
-Notre équipe te répond directement à <a href="mailto:instant.eats@gmx.com?subject=Assistance%20Instant%20Eats&body=Bonjour%20!%20%0AJe%20rencontre%20un%20probl%C3%A8me%20avec%20%3A%20_____________________%0A%0AMerci%20">
-📩 Besoin d'aide ? Contactez-nous
-</a></p></div></div>
-<div class="page" id="settings" aria-hidden="true"><div class="card"><h2>Accessibilité</h2><p>Nous raffinons cette onglets pour vous.
-</p></div></div>
+Notre équipe te répond directement à <a href="mailto:instant.eats@gmx.com?subject=Assistance%20Instant%20Eats&body=Bonjour%20!%20%0AJe%20rencontre%20un%20probl%C3%A8me%20avec%20%3A%20_____________________%0A%0AMerci%20">📩 Contactez-nous</a></p></div></div>
+<div class="page" id="settings" aria-hidden="true"><div class="card"><h2>Accessibilité</h2><p>Nous raffinons cette onglet pour vous.</p></div></div>
 </main>
 </div>
 
 <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const SUPABASE_URL = "https://prj_5lbYg33suv7TGNEuXmJN5v6s7ypS.supabase.co"
+const SUPABASE_KEY = "TON_ANON_KEY_ICI"
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const API_URL = "https://instant-eats-aviscommentaire.vercel.app/api/comments"
+
 // Onglets
 const tabs=document.querySelectorAll('.tab-btn'), pages=document.querySelectorAll('.page')
 tabs.forEach(tab=>tab.addEventListener('click',()=>{
@@ -151,81 +156,64 @@ tabs.forEach(tab=>tab.addEventListener('click',()=>{
   pages.forEach(p=>p.id===target?p.setAttribute('aria-hidden','false'):p.setAttribute('aria-hidden','true'))
 }))
 
-// Variables pour étoiles et emoji
+// Connexion Google
+document.getElementById('loginBtn').addEventListener('click', async ()=>{
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  })
+  if(error) console.error(error)
+})
+
+// Gestion étoiles et emoji
 let selectedStar=0, selectedEmoji=''
-
-// Gestion étoiles
-document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{
-  selectedStar=parseInt(s.dataset.value)
-  document.querySelectorAll('.star').forEach(st=>st.classList.toggle('on',parseInt(st.dataset.value)<=selectedStar))
-}))
-
-// Gestion emoji
-document.querySelectorAll('.emoji').forEach(e=>e.addEventListener('click',()=>{
-  selectedEmoji=e.dataset.emoji
-  document.querySelectorAll('.emoji').forEach(em=>em.classList.remove('selected'))
-  e.classList.add('selected')
-}))
-
-// API serveur Node.js
-const API_URL = "https://instant-eats-aviscommentaire.vercel.app/comments"
-const commentsList = document.getElementById('commentsList')
+document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{selectedStar=parseInt(s.dataset.value);document.querySelectorAll('.star').forEach(st=>st.classList.toggle('on',parseInt(st.dataset.value)<=selectedStar))}))
+document.querySelectorAll('.emoji').forEach(e=>e.addEventListener('click',()=>{selectedEmoji=e.dataset.emoji;document.querySelectorAll('.emoji').forEach(em=>em.classList.remove('selected'));e.classList.add('selected')}))
 
 // Publier commentaire
+const commentsList=document.getElementById('commentsList')
 document.getElementById('submitComment').addEventListener('click', async ()=>{
   const name = document.getElementById('userName').value.trim()
   const comment = document.getElementById('userComment').value.trim()
-  if(!name||!comment)return alert("Nom et commentaire requis")
-  
+  if(!name||!comment) return alert("Nom et commentaire requis")
+
+  // On récupère l’utilisateur Supabase (Google)
+  const { data: { user } } = await supabase.auth.getUser()
+  const email = user?.email || null
+
   try {
     const res = await fetch(API_URL, {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name, comment, star:selectedStar, emoji:selectedEmoji})
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ name, comment, star:selectedStar, emoji:selectedEmoji, email })
     })
-    if(!res.ok)throw new Error("Erreur serveur")
-    displayComments()
+    if(!res.ok) throw new Error("Erreur serveur")
+    // reset formulaire
     document.getElementById('userName').value=''
     document.getElementById('userComment').value=''
-    selectedStar=0
-    selectedEmoji=''
+    selectedStar=0; selectedEmoji=''
     document.querySelectorAll('.star').forEach(s=>s.classList.remove('on'))
     document.querySelectorAll('.emoji').forEach(e=>e.classList.remove('selected'))
-  } catch(err){console.error(err);alert("Impossible de publier le commentaire")}
+    displayComments()
+  } catch(e){console.error(e);alert("Impossible d'envoyer le commentaire")}
 })
 
 // Afficher commentaires
 async function displayComments(){
-  try{
+  try {
     const res = await fetch(API_URL)
     const data = await res.json()
-    commentsList.innerHTML=''
+    commentsList.innerHTML = ''
     data.reverse().forEach((c,i)=>{
-      const div = document.createElement('div')
-      div.className='comment-item'
-      div.style.animationDelay = `${i*0.08}s`
-      div.innerHTML = `<div><strong>${c.name}</strong> ${c.star?'⭐'.repeat(c.star):''} ${c.emoji||''}<p>${c.comment}</p></div><div class="like-btn">❤</div>`
-      const likeBtn = div.querySelector('.like-btn')
+      const div=document.createElement('div'); div.className='comment-item'; div.style.animationDelay=`${i*0.08}s`
+      div.innerHTML=`<div><strong>${c.name}</strong> ${c.star?'⭐'.repeat(c.star):''} ${c.emoji||''}<p>${c.comment}</p></div><div class="like-btn">❤</div>`
+      const likeBtn=div.querySelector('.like-btn')
       likeBtn.addEventListener('click',()=>{likeBtn.classList.toggle('liked')})
       commentsList.appendChild(div)
     })
-  } catch(err){console.error(err)}
+  } catch(e){console.error(e)}
 }
 displayComments()
-
-// Google Login (Supabase)
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-const SUPABASE_URL = "https://iszhlqozptyoqhggboho.supabase.co"
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzemhscW96cHR5b3FoZ2dib2hvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY0NTYwNjMsImV4cCI6MjA3MjAzMjA2M30.3b9w5g9BnJ75yAYOUOehhcHeTe48rt3aFlqgwcLBs7Y"
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
-
-document.getElementById('loginBtn').addEventListener('click', async()=>{
-  const {error} = await supabase.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo:'https://toiniu2000.github.io/vosavis/'}
-  })
-  if(error)console.error(error)
-})
 </script>
 </body>
 </html>
